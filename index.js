@@ -148,7 +148,6 @@ const run = async () => {
 
     })
 
-
     // get Just Treatement data from appointments collection .
     app.get('/appointmentSpeciality', async (req, res) => {
       const query = {}
@@ -157,11 +156,28 @@ const run = async () => {
     })
 
     //add doctors inforormation in database
-    app.post('/doctors', async(req, res)=>{
+    app.post('/doctors', verifyJwt, async (req, res) => {
       const doctor = req.body;
       const result = await doctorsCollection.insertOne(doctor);
       res.send(result);
     })
+
+    // get doctors data from database
+    app.get('/doctors', verifyJwt, async (req, res) => {
+      const query = {}
+      const doctors = await doctorsCollection.find(query).toArray();
+      res.send(doctors);
+    })
+
+    // delelte doctors data from database. 
+
+    app.delete('/doctors/:id', verifyJwt, async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const result = await doctorsCollection.deleteOne(query);
+      res.send(result);
+    })
+
 
 
 
